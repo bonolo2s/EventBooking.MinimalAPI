@@ -22,7 +22,7 @@ namespace EventFlow.API.Infrastructure.Security
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Name, user.FullName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role.ToString())
         };

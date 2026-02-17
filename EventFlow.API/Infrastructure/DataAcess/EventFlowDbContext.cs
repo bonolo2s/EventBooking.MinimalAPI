@@ -16,20 +16,23 @@ namespace EventFlow.API.Infrastructure.DataAcess
         {
             base.OnModelCreating(modelBuilder);
 
-            var userId = Guid.NewGuid();
+            // static IDs
+            var userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var event1Id = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            var event2Id = Guid.Parse("33333333-3333-3333-3333-333333333333");
+            var booking1Id = Guid.Parse("44444444-4444-4444-4444-444444444444");
+            var booking2Id = Guid.Parse("55555555-5555-5555-5555-555555555555");
+
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = userId,
-                    Name = "Alice Admin",
+                    FullName = "Alice Admin",
                     Email = "alice@example.com",
                     Password = "hashed_password_here",
                     Role = Role.Admin
                 }
             );
-
-            var event1Id = Guid.NewGuid();
-            var event2Id = Guid.NewGuid();
 
             modelBuilder.Entity<Event>().HasData(
                 new Event
@@ -37,8 +40,8 @@ namespace EventFlow.API.Infrastructure.DataAcess
                     Id = event1Id,
                     Title = "EF Core Workshop",
                     Description = "Learn EF Core in a day!",
-                    StartDate = DateTime.UtcNow.AddDays(5),
-                    EndDate = DateTime.UtcNow.AddDays(5).AddHours(3),
+                    StartDate = new DateTime(2026, 2, 20, 9, 0, 0, DateTimeKind.Utc),
+                    EndDate = new DateTime(2026, 2, 20, 12, 0, 0, DateTimeKind.Utc),
                     Capacity = 50
                 },
                 new Event
@@ -46,8 +49,8 @@ namespace EventFlow.API.Infrastructure.DataAcess
                     Id = event2Id,
                     Title = "C# Advanced Patterns",
                     Description = "Deep dive into C#.",
-                    StartDate = DateTime.UtcNow.AddDays(7),
-                    EndDate = DateTime.UtcNow.AddDays(7).AddHours(4),
+                    StartDate = new DateTime(2026, 2, 22, 10, 0, 0, DateTimeKind.Utc),
+                    EndDate = new DateTime(2026, 2, 22, 14, 0, 0, DateTimeKind.Utc),
                     Capacity = 30
                 }
             );
@@ -55,23 +58,24 @@ namespace EventFlow.API.Infrastructure.DataAcess
             modelBuilder.Entity<Booking>().HasData(
                 new Booking
                 {
-                    Id = Guid.NewGuid(),
+                    Id = booking1Id,
                     EventId = event1Id,
                     UserId = userId,
                     Tickets = 2,
                     Cancelled = false,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2026, 2, 15, 12, 0, 0, DateTimeKind.Utc)
                 },
                 new Booking
                 {
-                    Id = Guid.NewGuid(),
+                    Id = booking2Id,
                     EventId = event2Id,
                     UserId = userId,
                     Tickets = 1,
                     Cancelled = false,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2026, 2, 15, 13, 0, 0, DateTimeKind.Utc)
                 }
             );
         }
+
     }
 }
