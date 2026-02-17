@@ -10,47 +10,66 @@ namespace EventFlow.API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly HashPasssword _hashPasssword;
+        private readonly IJwtService _jwtService;
 
-        public UserService(IUserRepository userRepository, HashPasssword hashPasssword)
+        public UserService(IUserRepository userRepository, HashPasssword hashPasssword,IJwtService jwtService)
         {
             _userRepository = userRepository;
             _hashPasssword = hashPasssword;
+            _jwtService = jwtService;
         }
 
         public Task<User> createUser(RegisterUserRequest user)
         {
-            try
-            {
-                if (user == null)
-                    throw new ArgumentNullException("user cannot be null");
+            if (user == null)
+                throw new ArgumentNullException("user cannot be null");
  
-                if (string.IsNullOrEmpty(user.FullName) ||
-                    string.IsNullOrEmpty(user.Email) || 
-                    string.IsNullOrEmpty(user.Password))
-                    throw new ArgumentNullException("Please fill in all the details");
+            if (string.IsNullOrEmpty(user.FullName) ||
+                string.IsNullOrEmpty(user.Email) || 
+                string.IsNullOrEmpty(user.Password))
+                throw new ArgumentNullException("Please fill in all the details");
                 
 
 
-                var newUser = new User
-                {
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    Password = _hashPasssword.hash(user.Password),
-                    Role = Role.Admin,// for now all user ill defualt to admin
-                };
+            var newUser = new User
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                Password = _hashPasssword.hash(user.Password),
+                Role = Role.Admin,// for now all user ill defualt to admin
+            };
 
-                var result = _userRepository.addUser(newUser);
+            var result = _userRepository.addUser(newUser);
 
-                return result;
-            }
-            catch (Exception ex) {
-                throw new Exception("An unexpected error occurred while creating the user", ex);
-            }
+            return result;
         }
 
-        public Task<LoginResponseModel> loginUser(LoginDTO login)
+        public async Task<LoginResponseModel> loginUser(LoginDTO login)
         {
-            throw new NotImplementedException();
+            if (login == null)
+                throw new ArgumentNullException("login is null");
+
+            if (string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password))
+                throw new ArgumentException("Please fill in all the required fields");
+
+            var user = await _userRepository.GetUserByEmail(login.Email);
+            if (user == null)
+                throw new ArgumentNullException("user not found");
+
+            string token = string.Empty;
+
+            if (_hashPasssword.Verify(login.Password, user.Password))
+                token = _jwtService.generateToken(user);
+            else
+                throw new ArgumentException("Passwords dont match");
+
+            var response = new LoginResponseModel
+            {
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(150)
+            };
+
+            return response;
         }
     }
 }

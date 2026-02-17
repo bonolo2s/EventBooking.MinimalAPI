@@ -1,6 +1,7 @@
 ﻿using EventFlow.API.Domain;
 using EventFlow.API.Infrastructure.DataAcess;
 using EventFlow.API.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventFlow.API.Repositories
 {
@@ -32,12 +33,20 @@ namespace EventFlow.API.Repositories
         {
             var user =await  _context.Users.FindAsync(userId);
             return user;
-
         }
 
-        public Task<List<User>> GetUsers()
+        public async Task<User> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            var newUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return newUser;
+        }
+
+        public async Task<List<User>> GetUsers()
+        {
+            var users = new List<User>();
+            users = await _context.Users.ToListAsync();
+
+            return users;
         }
 
         public Task<User> updateUser(User user)

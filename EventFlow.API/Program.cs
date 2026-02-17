@@ -36,7 +36,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<EventFlowDbContext>();
-    db.Database.Migrate(); // applies pending migrations + seeds
+    db.Database.Migrate();
 }
 
 // ----------------- SWAGGER -----------------
@@ -81,36 +81,71 @@ app.MapPost("/api/auth/register",async (RegisterUserRequest register, IUserServi
 .Produces(400)
 .Produces(500);
 
-//app.MapPost("/api/auth/login", (LoginDTO login, IJwtService jwtService) =>
+app.MapPost("/api/auth/login", async (LoginDTO login, IJwtService jwtService ,IUserService userService , IUserRepository _userRepository) =>
+{
+    if (string.IsNullOrWhiteSpace(login.Email) || string.IsNullOrWhiteSpace(login.Password))
+        return Results.BadRequest("Email and password are required");
+
+    var user = await _userRepository.GetUserByEmail(login.Email);
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    try
+    {
+        var tokenObject = await userService.loginUser(login);
+
+        var response = new IResponseModel<LoginResponseModel>
+        {
+            Data = tokenObject,
+            Message = "User successfully logged in",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentException ex) when (ex.Message.Contains("Passwords dont match"))
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        throw new Exception("An error occured during login",ex);
+    }
+})
+.WithName("Login")
+.WithTags("Authentication") 
+.Produces(200)
+.Produces(400)
+.Produces(500);
+
+//app.MapPost("/api/auth/login1", async (LoginDTO login, IJwtService jwtService, IUserRepository _userRepository,HashPasssword _hash) =>
 //{
-//    // Validation
-//    if (string.IsNullOrWhiteSpace(login.Email) || string.IsNullOrWhiteSpace(login.Password))
-//        return Results.BadRequest(new { error = "Email and password are required" });
+//    var user = await _userRepository.GetUserByEmail(login.Email);
+//    if (user == null)
+//        return Results.NotFound("User not found");
 
-//    try
-//    {
-//        // TODO: Validate credentials against database here
-//        // For now, just generating token
-//        var token = jwtService.generateToken(new User
-//        {
-//            Email = login.Email,
-//            Name = login.Email,
-//            Role = "User"
-//        });
+//    if(!_hash.Verify(login.Password,user.Password))
+//        return Results.BadRequest("passwords do not match");
 
-//        return Results.Ok(new { token, expiresIn = 3600 });
-//    }
-//    catch (Exception ex)
+//    var token = jwtService.generateToken(user);
+
+//    var result = new LoginResponseModel
 //    {
-//        // Log the exception here
-//        return Results.Problem("An error occurred during login", statusCode: 500);
-//    }
+//        Token = token,
+//        ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+//    };
+
+//    var response = new IResponseModel<LoginResponseModel>
+//    {
+//        Data = result,
+//        Message = "",
+//        Error = false
+//    };
+//    return Results.Ok(response);
 //})
-//.WithName("Login")
-//.WithTags("Authentication") //for swagger grouping
+//.WithName("Login1")
+//.WithTags("Authentication")
 //.Produces(200)
 //.Produces(400)
 //.Produces(500);
-
 
 app.Run();
