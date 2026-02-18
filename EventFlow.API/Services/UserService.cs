@@ -44,6 +44,11 @@ namespace EventFlow.API.Services
             return result;
         }
 
+        public bool DeleteUser(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<LoginResponseModel> loginUser(LoginDTO login)
         {
             if (login == null)
@@ -70,6 +75,16 @@ namespace EventFlow.API.Services
             };
 
             return response;
+        }
+
+        public bool LogOutUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> UpdateUser()
+        {
+            throw new NotImplementedException();
         }
     }
 }

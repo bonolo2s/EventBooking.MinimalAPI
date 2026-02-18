@@ -24,9 +24,18 @@ namespace EventFlow.API.Repositories
             return result.Entity;
         }
 
-        public bool deleteUser(string userId)
+        public async Task<bool> deleteUser(string userId)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            var builder = _context.Users.Where(u => u.Id == user.Id );
+
+            var rows = await builder.ExecuteUpdateAsync(u =>
+                u.SetProperty(x => x.status, AdminStatus.Inactive)
+            );
+
+            return rows > 0;
         }
 
         public async Task<User?> getUser(string userId)
@@ -49,9 +58,16 @@ namespace EventFlow.API.Repositories
             return users;
         }
 
-        public Task<User> updateUser(User user)
+        public async Task<User> updateUser(User user)
         {
-            throw new NotImplementedException();
+            var builder = _context.Users.Where(u => u.Id == user.Id);
+
+            builder.ExecuteUpdate(u => u
+                .SetProperty(x => x.FullName, user.FullName)
+                .SetProperty(x => x.Email, user.Email)
+            );
+
+            return await _context.Users.FindAsync(user.Id);
         }
     }
 }

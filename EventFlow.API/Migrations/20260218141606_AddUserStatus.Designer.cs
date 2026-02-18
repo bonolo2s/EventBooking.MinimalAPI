@@ -4,6 +4,7 @@ using EventFlow.API.Infrastructure.DataAcess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventFlow.API.Migrations
 {
     [DbContext(typeof(EventFlowDbContext))]
-    partial class EventFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218141606_AddUserStatus")]
+    partial class AddUserStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,9 +144,6 @@ namespace EventFlow.API.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<int>("status")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -155,8 +155,7 @@ namespace EventFlow.API.Migrations
                             Email = "alice@example.com",
                             FullName = "Alice Admin",
                             Password = "hashed_password_here",
-                            Role = 0,
-                            status = 0
+                            Role = 0
                         });
                 });
 
