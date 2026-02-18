@@ -8,14 +8,33 @@ using EventFlow.API.Interfaces.Repositories;
 using EventFlow.API.Interfaces.Services;
 using EventFlow.API.Repositories;
 using EventFlow.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ----------------- SERVICE INJECTION -----------------
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
+        };
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddDbContext<IEventFlowDbContext, EventFlowDbContext>(options =>
@@ -72,6 +91,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// ----------------- MIDDLEWARE -----------------
+app.UseAuthentication();
+app.UseAuthorization();
 
 // ----------------- ROUTES -----------------
 app.MapGet("/", () => "Hello World!"); // minimal API route
