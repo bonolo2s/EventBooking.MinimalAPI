@@ -8,6 +8,6 @@
         public DateTime StartDate { get; init; }
         public DateTime EndDate { get; init; }
         public int Capacity { get; init; }
-        public ICollection<Booking> Bookings { get; init; } = new List<Booking>();
+        public ICollection<Booking> Bookings { get; init; } = new List<Booking>();// 
     }
 }

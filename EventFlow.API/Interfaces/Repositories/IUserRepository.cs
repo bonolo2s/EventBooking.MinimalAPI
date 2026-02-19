@@ -8,7 +8,7 @@ namespace EventFlow.API.Interfaces.Repositories
         Task<List<User>> GetUsers();
         Task<User> getUser(string userId);
         Task<User> updateUser(User user);
-        Task<bool> deleteUser(string userId); // or should i perform soft deletes?
+        Task<bool> deleteUser(string userId);
         Task<User> GetUserByEmail(string email);
     }
 }
