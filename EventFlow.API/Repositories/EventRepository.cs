@@ -37,9 +37,7 @@ namespace EventFlow.API.Repositories
 
         public async Task<List<Event>> GetAllEvents()
         {
-            var events = new List<Event>();
-            events = await _context.Events.ToListAsync();
-            return events;
+            return await _context.Events.ToListAsync();
         }
 
         public async Task<Event> GetEvent(string id)
@@ -52,7 +50,7 @@ namespace EventFlow.API.Repositories
 
             var builder = _context.Events.Where(u => u.Id == _event.Id);
 
-            builder.ExecuteUpdate(u => u
+            await builder.ExecuteUpdateAsync(u => u
                 .SetProperty(x => x.Title, _event.Title)
                 .SetProperty(x => x.StartDate, _event.StartDate)
                 .SetProperty(x => x.EndDate, _event.EndDate)

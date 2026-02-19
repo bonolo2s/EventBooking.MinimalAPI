@@ -52,17 +52,15 @@ namespace EventFlow.API.Repositories
 
         public async Task<List<User>> GetUsers()
         {
-            var users = new List<User>();
-            users = await _context.Users.ToListAsync();
 
-            return users;
+            return await _context.Users.ToListAsync();
         }
 
         public async Task<User> updateUser(User user)
         {
             var builder = _context.Users.Where(u => u.Id == user.Id);
 
-            builder.ExecuteUpdate(u => u
+            await builder.ExecuteUpdateAsync(u => u
                 .SetProperty(x => x.FullName, user.FullName)
                 .SetProperty(x => x.Email, user.Email)
             );
