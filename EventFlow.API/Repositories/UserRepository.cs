@@ -17,7 +17,7 @@ namespace EventFlow.API.Repositories
         public async Task<User> addUser(User user)
         {
 
-            var result = _context.Users.Add(user);
+            var result =await _context.Users.AddAsync(user);
 
             await _context.SaveChangesAsync();
 
