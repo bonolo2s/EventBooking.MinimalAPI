@@ -3,6 +3,7 @@ using EventFlow.API.DTOs;
 using EventFlow.API.Helpers;
 using EventFlow.API.Interfaces.Repositories;
 using EventFlow.API.Interfaces.Services;
+using System.Threading.Tasks;
 
 namespace EventFlow.API.Services
 {
@@ -44,9 +45,12 @@ namespace EventFlow.API.Services
             return result;
         }
 
-        public bool DeleteUser(string id)
+        public async Task<bool> DeleteUser(string id)
         {
-            throw new NotImplementedException();
+            if(id == null)
+                throw new ArgumentNullException("id is missing");
+
+            return await _userRepository.deleteUser(id);
         }
 
         public async Task<LoginResponseModel> loginUser(LoginDTO login)
@@ -79,12 +83,30 @@ namespace EventFlow.API.Services
 
         public bool LogOutUser()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException();//session expirations
         }
 
-        public Task<User> UpdateUser()
+        public async Task<User> UpdateUser(UpdateUserDTO update)
         {
-            throw new NotImplementedException();
+            if (update == null)
+                throw new ArgumentNullException("Update is null");
+
+            if (string.IsNullOrEmpty(update.Fullname) | string.IsNullOrEmpty(update.Email))
+                throw new ArgumentException("please fill in all the required fields");
+
+            var user = await _userRepository.GetUserByEmail(update.Email);
+
+            if (user == null)
+                throw new ArgumentException("User not found");
+
+            var updatedUser = new User //
+            {
+                FullName = update.Fullname,
+                Email = update.Email,
+            };
+
+            return await _userRepository.updateUser(updatedUser);//
+
         }
     }
 }

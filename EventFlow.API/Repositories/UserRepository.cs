@@ -32,7 +32,7 @@ namespace EventFlow.API.Repositories
             var builder = _context.Users.Where(u => u.Id == user.Id );
 
             var rows = await builder.ExecuteUpdateAsync(u =>
-                u.SetProperty(x => x.status, AdminStatus.Inactive)
+                u.SetProperty(x => x.status, UserStatus.Inactive)
             );
 
             return rows > 0;

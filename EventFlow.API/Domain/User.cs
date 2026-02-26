@@ -7,9 +7,9 @@
         public string Email { get; set; }
         public string Password { get; set; }
         public Role Role { get; set; }
-        public AdminStatus status { get; set; }
+        public UserStatus status { get; set; }
 
     }
     public enum Role {  Admin , Attendee }
-    public enum AdminStatus { Active, Inactive }
+    public enum UserStatus { Active, Inactive }
 }
