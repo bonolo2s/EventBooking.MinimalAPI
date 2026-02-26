@@ -24,7 +24,7 @@ namespace EventFlow.API.Repositories
             return result.Entity;
         }
 
-        public async Task<bool> deleteUser(string userId)
+        public async Task<bool> deleteUser(Guid userId)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null) return false;
@@ -38,7 +38,7 @@ namespace EventFlow.API.Repositories
             return rows > 0;
         }
 
-        public async Task<User?> getUser(string userId)
+        public async Task<User?> getUser(Guid userId)
         {
             var user =await  _context.Users.FindAsync(userId);
             return user;

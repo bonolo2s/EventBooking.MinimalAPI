@@ -22,7 +22,7 @@ namespace EventFlow.API.Repositories
             return result.Entity;
         }
 
-        public async Task<bool> DeleteBooking(string Id)
+        public async Task<bool> DeleteBooking(Guid Id)
         {
             var booking = await _context.Bookings.FindAsync(Id);
             var builder = await _context.Bookings.Where(u => u.Id == booking.Id)
@@ -36,7 +36,7 @@ namespace EventFlow.API.Repositories
             return await _context.Bookings.ToListAsync();
         }
 
-        public async Task<Booking> GetBooking(string Id)
+        public async Task<Booking> GetBooking(Guid Id)
         {
             return await _context.Bookings.FindAsync(Id);
         }

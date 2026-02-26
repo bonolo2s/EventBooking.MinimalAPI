@@ -6,8 +6,8 @@ namespace EventFlow.API.Interfaces.Repositories
     {
         Task<Booking> AddBooking(Booking booking);
         Task<bool> UpdateBooking(Booking booking);
-        Task<bool> DeleteBooking(string Id);
-        Task<Booking> GetBooking(string Id);
+        Task<bool> DeleteBooking(Guid Id);
+        Task<Booking> GetBooking(Guid Id);
         Task<List<Booking>> GetAllBookings();
     }
 }

@@ -6,9 +6,9 @@ namespace EventFlow.API.Interfaces.Repositories
     {
         Task<User> addUser(User user);
         Task<List<User>> GetUsers();
-        Task<User> getUser(string userId);
+        Task<User> getUser(Guid userId);
         Task<User> updateUser(User user);
-        Task<bool> deleteUser(string userId);
+        Task<bool> deleteUser(Guid userId);
         Task<User> GetUserByEmail(string email);
     }
 }

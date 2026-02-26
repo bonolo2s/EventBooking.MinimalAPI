@@ -45,7 +45,7 @@ namespace EventFlow.API.Services
             return result;
         }
 
-        public async Task<bool> DeleteUser(string id)
+        public async Task<bool> DeleteUser(Guid id)
         {
             if(id == null)
                 throw new ArgumentNullException("id is missing");

@@ -23,7 +23,7 @@ namespace EventFlow.API.Repositories
             return result.Entity;
         }
 
-        public async Task<bool> DeleteEvent(string _id)
+        public async Task<bool> DeleteEvent(Guid _id)
         {
             var user = await _context.Events.FindAsync(_id);
             if (user == null) return false;
@@ -40,7 +40,7 @@ namespace EventFlow.API.Repositories
             return await _context.Events.ToListAsync();
         }
 
-        public async Task<Event> GetEvent(string id)
+        public async Task<Event> GetEvent(Guid id)
         {
             return await _context.Events.FindAsync(id);
         }
