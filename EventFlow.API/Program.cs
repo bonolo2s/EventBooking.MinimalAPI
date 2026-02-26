@@ -167,9 +167,31 @@
     .Produces(400)
     .Produces(500);
 
-    app.MapPut("/api/users/", async (UpdateUserDTO updateUser, IUserRepository _userRepository, IUserService _userService) =>
+    app.MapPut("/api/users/", async (UpdateUserDTO updateUser, IUserService _userService) =>
     {
-        //
+        try
+        {
+            var updated = await _userService.UpdateUser(updateUser);
+            var response = new IResponseModel<User>
+            {
+                Data = updated,
+                Message = "User updated successfully",
+                Error = false
+            };
+            return Results.Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return Results.NotFound(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(ex.Message);
+        }
     })
     .WithName("UpdateUser")
     .WithTags("Users")
@@ -178,14 +200,10 @@
     .Produces(400)
     .Produces(500);
 
-    app.MapDelete("/api/users/{id}", async (Guid id,IUserService _userService, IUserRepository _userRepository) =>
+app.MapDelete("/api/users/{id}", async (Guid id,IUserService _userService) =>
     {
         try
-        {// what if i did one service on this layer
-            var user = await _userRepository.getUser(id);
-            if (user == null)
-                return Results.NotFound("User not founnd");
-
+        {
             var deleted = await _userService.DeleteUser(id);
 
             var response = new IResponseModel<bool>
@@ -197,11 +215,17 @@
 
             return Results.Ok(response);
         }
-        catch (Exception ex) 
+        catch (KeyNotFoundException ex)
         {
-            return Results.Problem(ex.Message);
+            return Results.NotFound(ex.Message);
+        }catch(ArgumentException ex)
+        {
+            return Results.BadRequest(ex.Message);
         }
-    
+        catch(Exception ex)
+        {
+        return Results.Problem(ex.Message);
+        }
     })
     .WithName("DeleteUser")
     .WithTags("User")

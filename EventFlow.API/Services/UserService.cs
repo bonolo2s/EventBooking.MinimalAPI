@@ -47,8 +47,13 @@ namespace EventFlow.API.Services
 
         public async Task<bool> DeleteUser(Guid id)
         {
-            if(id == null)
-                throw new ArgumentNullException("id is missing");
+            if (id == Guid.Empty)
+                throw new ArgumentException("id is missing");
+
+            var user = await _userRepository.getUser(id);
+
+            if (user == null)
+                throw new KeyNotFoundException("User not found");
 
             return await _userRepository.deleteUser(id);
         }
@@ -94,18 +99,15 @@ namespace EventFlow.API.Services
             if (string.IsNullOrEmpty(update.Fullname) | string.IsNullOrEmpty(update.Email))
                 throw new ArgumentException("please fill in all the required fields");
 
-            var user = await _userRepository.GetUserByEmail(update.Email);
+            var user = await _userRepository.getUser(update.Id);
 
             if (user == null)
-                throw new ArgumentException("User not found");
+                throw new KeyNotFoundException("User not found");
 
-            var updatedUser = new User //
-            {
-                FullName = update.Fullname,
-                Email = update.Email,
-            };
+            user.FullName = update.Fullname;
+            user.Email = update.Email;
 
-            return await _userRepository.updateUser(updatedUser);//
+            return await _userRepository.updateUser(user);//
 
         }
     }
