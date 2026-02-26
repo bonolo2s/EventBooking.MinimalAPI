@@ -60,7 +60,7 @@ namespace EventFlow.API.Infrastructure.DataAcess
                 {
                     Id = booking1Id,
                     EventId = event1Id,
-                    UserId = userId,
+                    //UserId = userId,
                     Tickets = 2,
                     Cancelled = false,
                     CreatedAt = new DateTime(2026, 2, 15, 12, 0, 0, DateTimeKind.Utc)
@@ -69,7 +69,7 @@ namespace EventFlow.API.Infrastructure.DataAcess
                 {
                     Id = booking2Id,
                     EventId = event2Id,
-                    UserId = userId,
+                    //UserId = userId,
                     Tickets = 1,
                     Cancelled = false,
                     CreatedAt = new DateTime(2026, 2, 15, 13, 0, 0, DateTimeKind.Utc)
