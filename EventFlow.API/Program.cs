@@ -167,102 +167,107 @@
     .Produces(400)
     .Produces(500);
 
-    app.MapPut("/api/users/", async (UpdateUserDTO updateUser, IUserService _userService) =>
+// ----------------- USER ROUTES -----------------
+
+// update user
+app.MapPut("/api/users/", async (UpdateUserDTO updateUser, IUserService _userService) =>
+{
+    try
     {
-        try
+        var updated = await _userService.UpdateUser(updateUser);
+        var response = new IResponseModel<User>
         {
-            var updated = await _userService.UpdateUser(updateUser);
-            var response = new IResponseModel<User>
-            {
-                Data = updated,
-                Message = "User updated successfully",
-                Error = false
-            };
-            return Results.Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return Results.NotFound(ex.Message);
-        }
-        catch (ArgumentException ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return Results.Problem(ex.Message);
-        }
-    })
-    .WithName("UpdateUser")
-    .WithTags("Users")
-    .RequireAuthorization()
-    .Produces(200)
-    .Produces(400)
-    .Produces(500);
-
-app.MapDelete("/api/users/{id}", async (Guid id,IUserService _userService) =>
+            Data = updated,
+            Message = "User updated successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (KeyNotFoundException ex)
     {
-        try
-        {
-            var deleted = await _userService.DeleteUser(id);
-
-            var response = new IResponseModel<bool>
-            {
-                Data = deleted,
-                Message = deleted ? "User deleted successfully" : "User could not be deleted",
-                Error = false
-            };
-
-            return Results.Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return Results.NotFound(ex.Message);
-        }catch(ArgumentException ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
-        catch(Exception ex)
-        {
+        return Results.NotFound(ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
         return Results.Problem(ex.Message);
-        }
-    })
-    .WithName("DeleteUser")
-    .WithTags("User")
-    .RequireAuthorization()
-    .Produces(200)
-    .Produces(400)
-    .Produces(500);
+    }
+})
+.WithName("UpdateUser")
+.WithTags("Users")
+.RequireAuthorization()
+.Produces(200)
+.Produces(400)
+.Produces(500);
 
-    //app.MapPost("/api/auth/login1", async (LoginDTO login, IJwtService jwtService, IUserRepository _userRepository,HashPasssword _hash) =>
-    //{
-    //    var user = await _userRepository.GetUserByEmail(login.Email);
-    //    if (user == null)
-    //        return Results.NotFound("User not found");
+// delete user
+app.MapDelete("/api/users/{id}", async (Guid id, IUserService _userService) =>
+{
+    try
+    {
+        var deleted = await _userService.DeleteUser(id);
 
-    //    if(!_hash.Verify(login.Password,user.Password))
-    //        return Results.BadRequest("passwords do not match");
+        var response = new IResponseModel<bool>
+        {
+            Data = deleted,
+            Message = deleted ? "User deleted successfully" : "User could not be deleted",
+            Error = false
+        };
 
-    //    var token = jwtService.generateToken(user);
+        return Results.Ok(response);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("DeleteUser")
+.WithTags("User")
+.RequireAuthorization()
+.Produces(200)
+.Produces(400)
+.Produces(500);
 
-    //    var result = new LoginResponseModel
-    //    {
-    //        Token = token,
-    //        ExpiresAt = DateTime.UtcNow.AddMinutes(15)
-    //    };
+//app.MapPost("/api/auth/login1", async (LoginDTO login, IJwtService jwtService, IUserRepository _userRepository,HashPasssword _hash) =>
+//{
+//    var user = await _userRepository.GetUserByEmail(login.Email);
+//    if (user == null)
+//        return Results.NotFound("User not found");
 
-    //    var response = new IResponseModel<LoginResponseModel>
-    //    {
-    //        Data = result,
-    //        Message = "",
-    //        Error = false
-    //    };
-    //    return Results.Ok(response);
-    //})
-    //.WithName("Login1")
-    //.WithTags("Authentication")
-    //.Produces(200)
-    //.Produces(400)
-    //.Produces(500);
+//    if(!_hash.Verify(login.Password,user.Password))
+//        return Results.BadRequest("passwords do not match");
 
-    app.Run();
+//    var token = jwtService.generateToken(user);
+
+//    var result = new LoginResponseModel
+//    {
+//        Token = token,
+//        ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+//    };
+
+//    var response = new IResponseModel<LoginResponseModel>
+//    {
+//        Data = result,
+//        Message = "",
+//        Error = false
+//    };
+//    return Results.Ok(response);
+//})
+//.WithName("Login1")
+//.WithTags("Authentication")
+//.Produces(200)
+//.Produces(400)
+//.Produces(500);
+
+app.Run();
