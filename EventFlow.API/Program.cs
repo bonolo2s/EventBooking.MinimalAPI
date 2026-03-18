@@ -41,6 +41,10 @@
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // i wanna see concurrency issues.
     builder.Services.AddScoped<IUserService,UserService>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IEventService, EventService>();
+    builder.Services.AddScoped<IBookingService, BookingService>();
+    builder.Services.AddScoped<IEventRepository, EventRepository>();
+    builder.Services.AddScoped<IBookingRepository, BookingRepository>();
     builder.Services.AddScoped<HashPasssword, HashPasssword>();
 
 
