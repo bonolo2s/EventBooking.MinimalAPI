@@ -25,6 +25,7 @@ namespace EventFlow.API.Repositories
         public async Task<bool> DeleteBooking(Guid Id)
         {
             var booking = await _context.Bookings.FindAsync(Id);
+            if (booking == null) return false; 
             var builder = await _context.Bookings.Where(u => u.Id == booking.Id)
                 .ExecuteDeleteAsync();
 
