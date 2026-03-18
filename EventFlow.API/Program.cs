@@ -444,6 +444,150 @@ app.MapDelete("/api/events/{id}", async (Guid id, IEventService _eventService) =
 .Produces(404)
 .Produces(500);
 
+// ----------------- BOOKING ROUTES -----------------
+
+app.MapPost("/api/bookings", async (CreateBookingDTO booking, IBookingService _bookingService) =>
+{
+    try
+    {
+        var created = await _bookingService.CreateBooking(booking);
+        var response = new IResponseModel<Booking>
+        {
+            Data = created,
+            Message = "Booking created successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentNullException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("CreateBooking")
+.WithTags("Bookings")
+.Produces(200)
+.Produces(400)
+.Produces(404)
+.Produces(500);
+
+app.MapGet("/api/bookings", async (IBookingService _bookingService) =>
+{
+    try
+    {
+        var bookings = await _bookingService.GetAllBookings();
+        var response = new IResponseModel<List<Booking>>
+        {
+            Data = bookings,
+            Message = "Bookings retrieved successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("GetAllBookings")
+.WithTags("Bookings")
+.RequireAuthorization("AdminOnly")
+.Produces(200)
+.Produces(404)
+.Produces(500);
+
+app.MapGet("/api/bookings/{id}", async (Guid id, IBookingService _bookingService) =>
+{
+    try
+    {
+        var booking = await _bookingService.GetBooking(id);
+        var response = new IResponseModel<Booking>
+        {
+            Data = booking,
+            Message = "Booking retrieved successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("GetBooking")
+.WithTags("Bookings")
+.RequireAuthorization("AdminOnly")
+.Produces(200)
+.Produces(400)
+.Produces(404)
+.Produces(500);
+
+app.MapPatch("/api/bookings/{id}/cancel", async (Guid id, IBookingService _bookingService) =>
+{
+    try
+    {
+        var cancelled = await _bookingService.CancelBooking(id);
+        var response = new IResponseModel<bool>
+        {
+            Data = cancelled,
+            Message = cancelled ? "Booking cancelled successfully" : "Booking could not be cancelled",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("CancelBooking")
+.WithTags("Bookings")
+.RequireAuthorization("AdminOnly")
+.Produces(200)
+.Produces(400)
+.Produces(404)
+.Produces(500);
+
 //app.MapPost("/api/auth/login1", async (LoginDTO login, IJwtService jwtService, IUserRepository _userRepository,HashPasssword _hash) =>
 //{
 //    var user = await _userRepository.GetUserByEmail(login.Email);
