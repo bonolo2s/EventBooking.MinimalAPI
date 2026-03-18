@@ -34,7 +34,10 @@
                     Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
             };
         });
-    builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    });
     builder.Services.AddSingleton<IJwtService, JwtService>();
     builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
     builder.Services.AddDbContext<IEventFlowDbContext, EventFlowDbContext>(options =>
