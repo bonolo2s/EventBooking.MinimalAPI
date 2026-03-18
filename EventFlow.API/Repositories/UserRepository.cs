@@ -52,8 +52,7 @@ namespace EventFlow.API.Repositories
 
         public async Task<List<User>> GetUsers()
         {
-
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Where(u => u.status == UserStatus.Active).ToListAsync();
         }
 
         public async Task<User> updateUser(User user)

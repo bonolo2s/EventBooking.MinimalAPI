@@ -203,6 +203,36 @@ app.MapPut("/api/users/", async (UpdateUserDTO updateUser, IUserService _userSer
 .Produces(400)
 .Produces(500);
 
+//get users
+app.MapGet("/api/users", async (IUserService _userService) =>
+{
+    try
+    {
+        var users = await _userService.GetUsers();
+        var response = new IResponseModel<List<User>>
+        {
+            Data = users,
+            Message = "Users retrieved successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("GetUsers")
+.WithTags("Users")
+.RequireAuthorization()
+.Produces(200)
+.Produces(404)
+.Produces(500);
+
 // delete user
 app.MapDelete("/api/users/{id}", async (Guid id, IUserService _userService) =>
 {
@@ -233,7 +263,7 @@ app.MapDelete("/api/users/{id}", async (Guid id, IUserService _userService) =>
     }
 })
 .WithName("DeleteUser")
-.WithTags("User")
+.WithTags("Users")
 .RequireAuthorization()
 .Produces(200)
 .Produces(400)

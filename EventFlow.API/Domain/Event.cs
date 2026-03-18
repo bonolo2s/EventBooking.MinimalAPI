@@ -1,13 +1,12 @@
-﻿namespace EventFlow.API.Domain
+﻿using EventFlow.API.Domain;
+
+public class Event
 {
-    public class Event
-    {
-        public Guid Id { get; init; }
-        public string Title { get; init; } = null!;
-        public string Description { get; init; } = null!;
-        public DateTime StartDate { get; init; }
-        public DateTime EndDate { get; init; }
-        public int Capacity { get; init; }
-        public ICollection<Booking> Bookings { get; init; } = new List<Booking>();// 
-    }
+    public Guid Id { get; set; }
+    public string Title { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public int Capacity { get; set; }
+    public ICollection<Booking> Bookings { get; init; } = new List<Booking>();
 }

@@ -9,6 +9,7 @@ namespace EventFlow.API.Interfaces.Services
         Task<User> createUser(RegisterUserRequest user);
         bool LogOutUser();// using refresh tokens ill be back.
         Task<User> UpdateUser(UpdateUserDTO update);
+        Task<List<User>> GetUsers();
         Task<bool> DeleteUser(Guid id);
     }
 }

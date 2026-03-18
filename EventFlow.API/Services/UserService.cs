@@ -57,6 +57,13 @@ namespace EventFlow.API.Services
 
             return await _userRepository.deleteUser(id);
         }
+        public async Task<List<User>> GetUsers()
+        {
+            var users = await _userRepository.GetUsers();
+            if (!users.Any())
+                throw new KeyNotFoundException("No users found");
+            return users;
+        }
 
         public async Task<LoginResponseModel> loginUser(LoginDTO login)
         {
