@@ -9,5 +9,6 @@ namespace EventFlow.API.Interfaces.Repositories
         Task<bool> DeleteBooking(Guid Id);
         Task<Booking> GetBooking(Guid Id);
         Task<List<Booking>> GetAllBookings();
+        Task<int> GetActiveBookingsCount(Guid eventId);
     }
 }

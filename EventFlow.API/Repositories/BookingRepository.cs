@@ -32,6 +32,13 @@ namespace EventFlow.API.Repositories
             return builder > 0;
         }
 
+        public async Task<int> GetActiveBookingsCount(Guid eventId)
+        {
+            return await _context.Bookings
+                .Where(b => b.EventId == eventId && !b.Cancelled)
+                .SumAsync(b => b.Tickets);
+        }
+
         public async Task<List<Booking>> GetAllBookings()
         {
             return await _context.Bookings.ToListAsync();
