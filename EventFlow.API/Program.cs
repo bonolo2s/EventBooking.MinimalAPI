@@ -276,6 +276,174 @@ app.MapDelete("/api/users/{id}", async (Guid id, IUserService _userService) =>
 .Produces(400)
 .Produces(500);
 
+// ----------------- EVENT ROUTES -----------------
+
+app.MapPost("/api/events", async (CreateEventDTO _event, IEventService _eventService) =>
+{
+    try
+    {
+        var created = await _eventService.CreateEvent(_event);
+        var response = new IResponseModel<Event>
+        {
+            Data = created,
+            Message = "Event created successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentNullException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("CreateEvent")
+.WithTags("Events")
+.RequireAuthorization("AdminOnly")
+.Produces(200)
+.Produces(400)
+.Produces(500);
+
+app.MapGet("/api/events", async (IEventService _eventService) =>
+{
+    try
+    {
+        var events = await _eventService.GetAllEvents();
+        var response = new IResponseModel<List<Event>>
+        {
+            Data = events,
+            Message = "Events retrieved successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("GetAllEvents")
+.WithTags("Events")
+.Produces(200)
+.Produces(404)
+.Produces(500);
+
+app.MapGet("/api/events/{id}", async (Guid id, IEventService _eventService) =>
+{
+    try
+    {
+        var _event = await _eventService.GetEvent(id);
+        var response = new IResponseModel<Event>
+        {
+            Data = _event,
+            Message = "Event retrieved successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("GetEvent")
+.WithTags("Events")
+.Produces(200)
+.Produces(400)
+.Produces(404)
+.Produces(500);
+
+app.MapPut("/api/events", async (UpdateEventDTO _event, IEventService _eventService) =>
+{
+    try
+    {
+        var updated = await _eventService.UpdateEvent(_event);
+        var response = new IResponseModel<Event>
+        {
+            Data = updated,
+            Message = "Event updated successfully",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentNullException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("UpdateEvent")
+.WithTags("Events")
+.RequireAuthorization("AdminOnly")
+.Produces(200)
+.Produces(400)
+.Produces(404)
+.Produces(500);
+
+app.MapDelete("/api/events/{id}", async (Guid id, IEventService _eventService) =>
+{
+    try
+    {
+        var deleted = await _eventService.DeleteEvent(id);
+        var response = new IResponseModel<bool>
+        {
+            Data = deleted,
+            Message = deleted ? "Event deleted successfully" : "Event could not be deleted",
+            Error = false
+        };
+        return Results.Ok(response);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+})
+.WithName("DeleteEvent")
+.WithTags("Events")
+.RequireAuthorization("AdminOnly")
+.Produces(200)
+.Produces(400)
+.Produces(404)
+.Produces(500);
+
 //app.MapPost("/api/auth/login1", async (LoginDTO login, IJwtService jwtService, IUserRepository _userRepository,HashPasssword _hash) =>
 //{
 //    var user = await _userRepository.GetUserByEmail(login.Email);
