@@ -38,6 +38,10 @@
     {
         options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     });
+    builder.Services.ConfigureHttpJsonOptions(options =>
+    {
+        options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
     builder.Services.AddSingleton<IJwtService, JwtService>();
     builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
     builder.Services.AddDbContext<IEventFlowDbContext, EventFlowDbContext>(options =>
